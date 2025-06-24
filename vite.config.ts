@@ -3,6 +3,6 @@ import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/joydev-3/',
+  base: '/joydev-5/',
   plugins: [react(), svgr()],
 });

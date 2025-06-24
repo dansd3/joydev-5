@@ -1,0 +1,12 @@
+.modal {
+  position: absolute;
+  padding: 16px;
+  margin-top: 8px;
+  z-index: 10;
+
+  &__buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+}
