@@ -8,7 +8,7 @@ interface TaskCardProps {
   id: string;
   title: string;
   onDelete: () => void;
-  onDragStart: () => void;
+  onDragStart: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
 export const TaskCard: React.FC<TaskCardProps> = ({ title, onDelete, onDragStart }) => {

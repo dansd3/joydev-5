@@ -1,44 +1,80 @@
-import { Heading } from '../../components/Heading/Heading';
+import { useState, useEffect, } from 'react';
 import { TodoInput } from '../../components/TodoInput/TodoInput';
 import { Button } from '../../components/Button/Button';
 import { Column } from '../../components/Column/Column';
+import { Modal } from '../../components/Modal/Modal';
 import styles from './TodoPage.module.scss';
 
 interface Task {
   id: string;
   title: string;
-  status: 'todo' | 'inprogress' | 'done';
+  status: 'to do' | 'in progress' | 'done';
 }
 
 export const TodoPage = () => {
-  const tasks: Task[] = [
-    { id: '1', title: 'Задача 1', status: 'todo' },
-    { id: '2', title: 'Задача 2', status: 'todo' },
-    { id: '3', title: 'Задача 3', status: 'todo' },
-    { id: '4', title: 'Задача 4', status: 'inprogress' },
-    { id: '5', title: 'Задача 5', status: 'done' },
-    { id: '6', title: 'Задача 6', status: 'done' },
-  ];
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [newTask, setNewTask] = useState('');
+  const [selectedTask, setSelectedTask] = useState<string | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const savedTasks = localStorage.getItem('tasks');
+    setTasks(savedTasks ? JSON.parse(savedTasks) : []);
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+  }, [tasks]);
+
+  const addTask = () => {
+    if (newTask.trim()) {
+      setTasks([...tasks, { id: crypto.randomUUID(), title: newTask.trim(), status: 'to do' }]);
+      setNewTask('');
+    }
+  };
+
+  const deleteTask = (id: string) => {
+    setTasks(tasks.filter(task => task.id !== id));
+    setSelectedTask(null);
+  };
+
+  const moveTask = (id: string, newStatus: 'to do' | 'in progress' | 'done') => {
+    setTasks(tasks.map(task => task.id === id ? { ...task, status: newStatus } : task));
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>, status: Task["status"]) => {
+    event.preventDefault();
+    const id = event.dataTransfer.getData('text');
+    moveTask(id, status);
+  };
 
   return (
     <div className={styles.page}>
-      <Heading size={500} className={styles.page__title}>Поле ввода названия задачи</Heading>
       <div className={styles.page__input}>
-        <TodoInput value="" onChange={() => {}} className={styles.page__inputField} />
-        <Button variant="primary" icon="plus" label="Добавить" onClick={() => {}} />
+        <TodoInput value={newTask} onChange={setNewTask} className={styles.page__inputField} />
+        <Button variant="primary" icon="plus" label="Добавить" onClick={addTask} />
       </div>
       <div className={styles.page__board}>
-        {['todo', 'inprogress', 'done'].map(status => (
+        {['to do', 'in progress', 'done'].map(status => (
           <Column
             key={status}
             status={status as Task["status"]}
-            tasks={tasks.filter(task => task.status === status)}
-            onDrop={() => {}}
-            onDelete={() => {}}
-            onDragStart={() => {}}
+            tasks={tasks}
+            onDrop={(e) => handleDrop(e, status as Task["status"])}
+            onDelete={setSelectedTask}
+            onDragStart={(id, e) => e.dataTransfer.setData('text', id)}
           />
         ))}
       </div>
+      {selectedTask !== null && (
+        <Modal
+          onConfirm={() => deleteTask(selectedTask)}
+          onCancel={() => setSelectedTask(null)}
+        />
+      )}
     </div>
   );
 };

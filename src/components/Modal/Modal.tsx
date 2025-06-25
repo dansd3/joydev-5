@@ -5,14 +5,11 @@ import { Button } from '../Button/Button';
 import styles from './Modal.module.scss';
 
 interface ModalProps {
-  isOpen: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onConfirm, onCancel }) => {
-  if (!isOpen) return null;
-
+export const Modal: React.FC<ModalProps> = ({ onConfirm, onCancel }) => {
   return (
     <Card elevation={2} className={styles.modal}>
       <Heading size={400}>Удалить задачу?</Heading>

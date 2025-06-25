@@ -4,11 +4,11 @@ import { TaskCard } from '../TaskCard/TaskCard';
 import styles from './Column.module.scss';
 
 interface ColumnProps {
-  status: 'todo' | 'inprogress' | 'done';
-  tasks: { id: string; title: string; status: 'todo' | 'inprogress' | 'done' }[];
-  onDrop: () => void;
+  status: 'to do' | 'in progress' | 'done';
+  tasks: { id: string; title: string; status: 'to do' | 'in progress' | 'done' }[];
+  onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
   onDelete: (id: string) => void;
-  onDragStart: (id: string) => void;
+  onDragStart: (id: string, e: React.DragEvent<HTMLDivElement>) => void;
 }
 
 export const Column: React.FC<ColumnProps> = ({ status, tasks, onDrop, onDelete, onDragStart }) => {
@@ -21,7 +21,7 @@ export const Column: React.FC<ColumnProps> = ({ status, tasks, onDrop, onDelete,
           id={task.id}
           title={task.title}
           onDelete={() => onDelete(task.id)}
-          onDragStart={() => onDragStart(task.id)}
+          onDragStart={e => onDragStart(task.id, e)}
         />
       ))}
     </div>
