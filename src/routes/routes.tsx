@@ -1,5 +1,5 @@
 import WelcomePage from '../pages/WelcomePage/WelcomePage';
-import { PostsPage } from '../pages/TodoPage/TodoPage';
+import { TodoPage } from '../pages/TodoPage/TodoPage';
 
 export const routes = [
   { path: '/', label: 'Приветствие', element: <WelcomePage /> },
