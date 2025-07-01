@@ -1,4 +1,4 @@
-import { useState, useEffect, } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { TodoInput } from '../../components/TodoInput/TodoInput';
 import { Button } from '../../components/Button/Button';
 import { Column } from '../../components/Column/Column';
@@ -16,7 +16,7 @@ export const TodoPage = () => {
   const [newTask, setNewTask] = useState('');
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-
+  const statusList = useMemo(() => ['to do', 'in progress', 'done'], []);
   useEffect(() => {
     const savedTasks = localStorage.getItem('tasks');
     setTasks(savedTasks ? JSON.parse(savedTasks) : []);
@@ -37,15 +37,15 @@ export const TodoPage = () => {
   };
 
   const deleteTask = (id: string) => {
-    setTasks(tasks.filter(task => task.id !== id));
+    setTasks(tasks.filter((task) => task.id !== id));
     setSelectedTask(null);
   };
 
   const moveTask = (id: string, newStatus: 'to do' | 'in progress' | 'done') => {
-    setTasks(tasks.map(task => task.id === id ? { ...task, status: newStatus } : task));
+    setTasks(tasks.map((task) => (task.id === id ? { ...task, status: newStatus } : task)));
   };
 
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>, status: Task["status"]) => {
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>, status: Task['status']) => {
     event.preventDefault();
     const id = event.dataTransfer.getData('text');
     moveTask(id, status);
@@ -58,23 +58,18 @@ export const TodoPage = () => {
         <Button variant="primary" icon="plus" label="Добавить" onClick={addTask} />
       </div>
       <div className={styles.page__board}>
-        {['to do', 'in progress', 'done'].map(status => (
+        {statusList.map((status) => (
           <Column
             key={status}
-            status={status as Task["status"]}
+            status={status as Task['status']}
             tasks={tasks}
-            onDrop={(e) => handleDrop(e, status as Task["status"])}
+            onDrop={(e) => handleDrop(e, status as Task['status'])}
             onDelete={setSelectedTask}
             onDragStart={(id, e) => e.dataTransfer.setData('text', id)}
           />
         ))}
       </div>
-      {selectedTask !== null && (
-        <Modal
-          onConfirm={() => deleteTask(selectedTask)}
-          onCancel={() => setSelectedTask(null)}
-        />
-      )}
+      {selectedTask !== null && <Modal onConfirm={() => deleteTask(selectedTask)} onCancel={() => setSelectedTask(null)} />}
     </div>
   );
 };

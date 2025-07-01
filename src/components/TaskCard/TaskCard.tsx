@@ -16,7 +16,9 @@ export const TaskCard: React.FC<TaskCardProps> = ({ title, onDelete, onDragStart
     <div className={styles.taskCard} draggable onDragStart={onDragStart}>
       <Card elevation={1} className={styles.taskCard__card}>
         <div className={styles.taskCard__content}>
-          <Text size={400} className={styles.taskCard__text}>{title}</Text>
+          <Text size={400} className={styles.taskCard__text}>
+            {title}
+          </Text>
           <CloseIcon className={styles.taskCard__closeIcon} onClick={onDelete} />
         </div>
       </Card>
